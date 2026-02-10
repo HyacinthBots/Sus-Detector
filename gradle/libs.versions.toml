@@ -1,0 +1,35 @@
+[versions]
+# Plugins
+kotlin = "2.3.0"
+detekt = "1.23.8"
+blossom = "2.1.0"
+grgit = "5.3.2"
+
+# Libraries
+kord-extensions = "2.4.1-20251224.130127-1"
+kordex-plugin = "1.9.0"
+kordex-i18n = "1.1.1"
+logging = "7.0.14"
+logback = "1.5.29"
+mongodb = "5.6.3"
+
+[libraries]
+kord-extensions-core = { module = "dev.kordex:kord-extensions", version.ref = "kord-extensions" }
+kord-extensions-unsafe = { module = "dev.kordex.modules:dev-unsafe", version.ref = "kord-extensions" }
+
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+logging = { module = "io.github.oshai:kotlin-logging", version.ref = "logging" }
+detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+mongodb = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb" }
+mongodb-driverkx = { module = "org.mongodb:mongodb-driver-kotlin-extensions", version.ref = "mongodb" }
+bsonkx = { module = "org.mongodb:bson-kotlinx", version.ref = "mongodb" }
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kord-extensions-plugin = { id = "dev.kordex.gradle.kordex", version.ref = "kordex-plugin" }
+kord-extensions-i18n = { id = "dev.kordex.gradle.i18n", version.ref = "kordex-i18n" }
+blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
+grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
