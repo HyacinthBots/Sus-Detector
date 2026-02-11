@@ -38,10 +38,10 @@ suspend fun ExtensibleBotBuilder.database(migrate: Boolean) {
                 single { GuildLeaveTimeCollection() } bind GuildLeaveTimeCollection::class
                 single { MetaCollection() } bind MetaCollection::class
             }
-        }
 
-        if (migrate) {
-            db.migrate()
+            if (migrate) {
+                db.migrate()
+            }
         }
     }
 }

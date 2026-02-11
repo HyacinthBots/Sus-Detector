@@ -8,7 +8,12 @@ import org.bson.conversions.Bson
 /**
  * Finds all the documents in the collection.
  */
-fun <T : Any> MongoCollection<T>.find(vararg filters: Bson?) = find(and(*filters))
+fun <T : Any> MongoCollection<T>.find(vararg filters: Bson?) =
+    if (filters.isNotEmpty()) {
+        find(and(*filters))
+    } else {
+        find()
+    }
 
 /**
  * Finds the first document that matches the [filter] in the collection. If no documents match, null is returned.
