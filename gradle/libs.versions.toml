@@ -11,7 +11,7 @@ kordex-plugin = "1.9.0"
 kordex-i18n = "1.1.1"
 logging = "7.0.14"
 logback = "1.5.29"
-mongodb = "5.6.3"
+mongodb = "5.6.4"
 
 [libraries]
 kord-extensions-core = { module = "dev.kordex:kord-extensions", version.ref = "kord-extensions" }
