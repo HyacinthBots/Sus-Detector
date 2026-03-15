@@ -16,14 +16,19 @@ import dev.kordex.core.checks.anyGuild
 import dev.kordex.core.checks.hasPermission
 import dev.kordex.core.commands.Arguments
 import dev.kordex.core.commands.application.slash.EphemeralSlashCommandContext
+import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
+import dev.kordex.core.commands.application.slash.converters.impl.defaultingEnumChoice
 import dev.kordex.core.commands.application.slash.ephemeralSubCommand
 import dev.kordex.core.commands.converters.impl.channel
 import dev.kordex.core.extensions.Extension
 import dev.kordex.core.extensions.ephemeralSlashCommand
+import dev.kordex.i18n.Key
 import org.hyacinthbots.susdetector.database.collections.ConfigCollection
 import org.hyacinthbots.susdetector.database.entities.Config
 import susdetector.i18n.Translations
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 
 class Config : Extension() {
     override val name: String
@@ -48,19 +53,30 @@ class Config : Extension() {
                 action {
                     val config = getConfig()
 
+                    val deleteDuration = when (arguments.deleteMessageDuration) {
+                        DeleteDuration.LastHour -> 1.hours.inWholeSeconds
+                        DeleteDuration.Last6Hours -> 6.hours.inWholeSeconds
+                        DeleteDuration.Last12Hours -> 12.hours.inWholeSeconds
+                        DeleteDuration.LastDay -> 1.days.inWholeSeconds
+                        DeleteDuration.Last3Days -> 3.days.inWholeSeconds
+                        DeleteDuration.Last7Days -> 7.days.inWholeSeconds
+                    }
+
                     if (config == null) {
                         ConfigCollection().set(
                             Config(
                                 guild!!.id,
                                 arguments.detectionChannel.id,
-                                arguments.actionLogChannel.id
+                                arguments.actionLogChannel.id,
+                                deleteDuration
                             )
                         )
                     } else {
                         ConfigCollection().update(
                             guild!!.id,
                             arguments.detectionChannel.id,
-                            arguments.actionLogChannel.id
+                            arguments.actionLogChannel.id,
+                            deleteDuration
                         )
                     }
 
@@ -106,6 +122,15 @@ class Config : Extension() {
 
                     val detectionChannel = guild!!.getChannelOf<GuildMessageChannel>(config.detectionChannelId)
                     val actionLogChannel = guild!!.getChannelOf<GuildMessageChannel>(config.actionLogId)
+                    val deleteDuration = when (config.deleteDuration) {
+                        1.hours.inWholeSeconds -> 1.hours
+                        6.hours.inWholeSeconds -> 6.hours
+                        12.hours.inWholeSeconds -> 12.hours
+                        1.days.inWholeSeconds -> 1.days
+                        3.days.inWholeSeconds -> 3.days
+                        7.days.inWholeSeconds -> 7.days
+                        else -> 3.days
+                    }
 
                     respond {
                         embed {
@@ -119,6 +144,10 @@ class Config : Extension() {
                             field {
                                 name = Translations.Config.Embed.actionLogName.translate()
                                 value = actionLogChannel.mention
+                            }
+                            field {
+                                name = Translations.Config.Embed.deleteName.translate()
+                                value = deleteDuration.toString().lowercase().replace("pt", "").replace("p", "")
                             }
                         }
                     }
@@ -182,6 +211,21 @@ class Config : Extension() {
             name = Translations.Config.Log.name
             description = Translations.Config.Log.desc
         }
+
+        val deleteMessageDuration by defaultingEnumChoice<DeleteDuration> {
+            name = Translations.Config.DelDays.name
+            description = Translations.Config.DelDays.desc
+            typeName = DeleteDuration.Last3Days.readableName
+            defaultValue = DeleteDuration.Last3Days
+            choices = mutableMapOf(
+                DeleteDuration.LastHour.readableName to DeleteDuration.LastHour,
+                DeleteDuration.Last6Hours.readableName to DeleteDuration.Last6Hours,
+                DeleteDuration.Last12Hours.readableName to DeleteDuration.Last12Hours,
+                DeleteDuration.LastDay.readableName to DeleteDuration.LastDay,
+                DeleteDuration.Last3Days.readableName to DeleteDuration.Last3Days,
+                DeleteDuration.Last7Days.readableName to DeleteDuration.Last7Days
+            )
+        }
     }
 
     suspend fun EphemeralSlashCommandContext<*, *>.getConfig(): Config? {
@@ -204,4 +248,13 @@ class Config : Extension() {
             value = actionLogChannel.mention
         }
     }
+}
+
+enum class DeleteDuration(override val readableName: Key) : ChoiceEnum {
+    LastHour(Translations.Delete.lasthour),
+    Last6Hours(Translations.Delete.last6),
+    Last12Hours(Translations.Delete.last12),
+    LastDay(Translations.Delete.lastday),
+    Last3Days(Translations.Delete.last3days),
+    Last7Days(Translations.Delete.last7days),
 }

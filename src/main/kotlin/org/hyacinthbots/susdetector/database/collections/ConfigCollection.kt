@@ -40,9 +40,14 @@ class ConfigCollection : KordExKoinComponent {
      * @param detectionChannelId The new ID for the detection channel
      * @param actionLogId The new ID for the action log.
      */
-    suspend fun update(id: Snowflake, detectionChannelId: Snowflake? = null, actionLogId: Snowflake? = null) {
-        // If both are null, no changes are required
-        if (detectionChannelId == null && actionLogId == null) return
+    suspend fun update(
+        id: Snowflake,
+        detectionChannelId: Snowflake? = null,
+        actionLogId: Snowflake? = null,
+        deleteDuration: Long? = null
+    ) {
+        // If options are null, no changes are required
+        if (detectionChannelId == null && actionLogId == null && deleteDuration == null) return
 
         if (detectionChannelId != null) {
             collection.findOneAndUpdate(
@@ -53,6 +58,10 @@ class ConfigCollection : KordExKoinComponent {
 
         if (actionLogId != null) {
             collection.findOneAndUpdate(Config::_id eq id, Updates.set(Config::actionLogId, detectionChannelId))
+        }
+
+        if (deleteDuration != null) {
+            collection.findOneAndUpdate(Config::_id eq id, Updates.set(Config::deleteDuration, deleteDuration))
         }
     }
 
