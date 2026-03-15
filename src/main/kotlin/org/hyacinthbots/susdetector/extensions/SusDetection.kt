@@ -14,11 +14,14 @@ import dev.kordex.core.extensions.event
 import dev.kordex.core.utils.dm
 import dev.kordex.core.utils.hasPermission
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.delay
 import org.hyacinthbots.susdetector.database.collections.ConfigCollection
 import org.hyacinthbots.susdetector.utils.trimmedContents
 import susdetector.i18n.Translations
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toDuration
 
 class SusDetection : Extension() {
     override val name: String = "sus-detection"
@@ -63,9 +66,12 @@ class SusDetection : Extension() {
                 logger.debug { "Banning ${targetUser.id}" }
                 guild.ban(targetUser.id) {
                     reason = "Sent a message in ${event.message.channel.mention}"
-                    deleteMessageDuration = 3.days
+                    deleteMessageDuration = config?.deleteDuration?.seconds ?: 3.days
                 }
                 logger.debug { "Banned ${targetUser.id}" }
+
+                logger.debug { "Delays 3 seconds before unbanning" }
+                delay(3.seconds)
 
                 logger.debug { "Unbanning ${targetUser.id}" }
                 guild.unban(targetUser.id, "Unbanned following sus messages.")
