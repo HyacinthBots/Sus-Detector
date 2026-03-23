@@ -1,7 +1,7 @@
 package org.hyacinthbots.susdetector.database.collections
 
 import com.mongodb.kotlin.client.model.Filters.eq
-import com.mongodb.kotlin.client.model.Updates
+import com.mongodb.kotlin.client.model.Updates.set
 import dev.kord.common.entity.Snowflake
 import dev.kordex.core.koin.KordExKoinComponent
 import org.hyacinthbots.susdetector.database.Collection
@@ -50,18 +50,15 @@ class ConfigCollection : KordExKoinComponent {
         if (detectionChannelId == null && actionLogId == null && deleteDuration == null) return
 
         if (detectionChannelId != null) {
-            collection.findOneAndUpdate(
-                Config::_id eq id,
-                Updates.set(Config::detectionChannelId, detectionChannelId)
-            )
+            collection.findOneAndUpdate(Config::_id eq id, set(Config::detectionChannelId, detectionChannelId))
         }
 
         if (actionLogId != null) {
-            collection.findOneAndUpdate(Config::_id eq id, Updates.set(Config::actionLogId, detectionChannelId))
+            collection.findOneAndUpdate(Config::_id eq id, set(Config::actionLogId, actionLogId))
         }
 
         if (deleteDuration != null) {
-            collection.findOneAndUpdate(Config::_id eq id, Updates.set(Config::deleteDuration, deleteDuration))
+            collection.findOneAndUpdate(Config::_id eq id, set(Config::deleteDuration, deleteDuration))
         }
     }
 

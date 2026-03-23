@@ -21,7 +21,6 @@ import susdetector.i18n.Translations
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toDuration
 
 class SusDetection : Extension() {
     override val name: String = "sus-detection"
