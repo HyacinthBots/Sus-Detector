@@ -6,6 +6,7 @@ import org.hyacinthbots.susdetector.database.collections.MetaCollection
 import org.hyacinthbots.susdetector.database.entities.Meta
 import org.hyacinthbots.susdetector.database.migrations.v1
 import org.hyacinthbots.susdetector.database.migrations.v2
+import org.hyacinthbots.susdetector.database.migrations.v3
 import org.koin.core.component.inject
 
 object Migrator : KordExKoinComponent {
@@ -37,6 +38,7 @@ object Migrator : KordExKoinComponent {
                 when (nextVersion) {
                     1 -> ::v1
                     2 -> ::v2
+                    3 -> ::v3
                     else -> break
                 }(db.database)
 

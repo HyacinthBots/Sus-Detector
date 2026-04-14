@@ -57,7 +57,7 @@ class SusDetection : Extension() {
                 targetUser.dm {
                     embed {
                         title = Translations.Sus.dmTitle.translate(guild.asGuildOrNull().name)
-                        description = Translations.Sus.dmDesc.translate()
+                        description = config?.customDm ?: Translations.Sus.dmDesc.translate()
                     }
                 }
                 logger.debug { "DM attempt sent to ${targetUser.id}" }

@@ -7,7 +7,7 @@
 
 ![GitHub](https://img.shields.io/github/license/HyacinthBots/Sus-Detector?label=License) ![GitHub repo size](https://img.shields.io/github/repo-size/HyacinthBots/Sus-Detector?label=Repository%20Size)
 
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/HyacinthBots/Sus-Detector/latest/develop?include_prereleases) ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/HyacinthBots/Sus-Detector/main?label=Commit%20Activity)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/HyacinthBots/Sus-Detector/latest/main?include_prereleases) ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/HyacinthBots/Sus-Detector/main?label=Commit%20Activity)
 
 ---
 

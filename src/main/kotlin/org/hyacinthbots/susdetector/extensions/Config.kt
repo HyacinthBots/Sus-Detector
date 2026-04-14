@@ -20,15 +20,20 @@ import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
 import dev.kordex.core.commands.application.slash.converters.impl.defaultingEnumChoice
 import dev.kordex.core.commands.application.slash.ephemeralSubCommand
 import dev.kordex.core.commands.converters.impl.channel
+import dev.kordex.core.commands.converters.impl.optionalString
 import dev.kordex.core.extensions.Extension
 import dev.kordex.core.extensions.ephemeralSlashCommand
 import dev.kordex.i18n.Key
 import org.hyacinthbots.susdetector.database.collections.ConfigCollection
 import org.hyacinthbots.susdetector.database.entities.Config
+import org.hyacinthbots.susdetector.utils.trimmedContents
 import susdetector.i18n.Translations
 import kotlin.time.Clock
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class Config : Extension() {
     override val name: String
@@ -54,12 +59,12 @@ class Config : Extension() {
                     val config = getConfig()
 
                     val deleteDuration = when (arguments.deleteMessageDuration) {
-                        DeleteDuration.LastHour -> 1.hours.inWholeSeconds
-                        DeleteDuration.Last6Hours -> 6.hours.inWholeSeconds
-                        DeleteDuration.Last12Hours -> 12.hours.inWholeSeconds
-                        DeleteDuration.LastDay -> 1.days.inWholeSeconds
-                        DeleteDuration.Last3Days -> 3.days.inWholeSeconds
-                        DeleteDuration.Last7Days -> 7.days.inWholeSeconds
+                        DeleteDuration.LastHour -> 1.hours
+                        DeleteDuration.Last6Hours -> 6.hours
+                        DeleteDuration.Last12Hours -> 12.hours
+                        DeleteDuration.LastDay -> 1.days
+                        DeleteDuration.Last3Days -> 3.days
+                        DeleteDuration.Last7Days -> 7.days
                     }
 
                     if (config == null) {
@@ -68,7 +73,8 @@ class Config : Extension() {
                                 guild!!.id,
                                 arguments.detectionChannel.id,
                                 arguments.actionLogChannel.id,
-                                deleteDuration
+                                deleteDuration.inWholeSeconds,
+                                arguments.customDm
                             )
                         )
                     } else {
@@ -76,13 +82,22 @@ class Config : Extension() {
                             guild!!.id,
                             arguments.detectionChannel.id,
                             arguments.actionLogChannel.id,
-                            deleteDuration
+                            deleteDuration.inWholeSeconds,
+                            arguments.customDm
                         )
                     }
 
                     arguments.actionLogChannel.asChannelOf<GuildMessageChannel>().createMessage {
                         embed {
-                            embed(arguments.detectionChannel, arguments.actionLogChannel)
+                            title = Translations.Config.Embed.setTitle.translate()
+                            color = DISCORD_GREEN
+                            timestamp = Clock.System.now()
+                            embed(
+                                arguments.detectionChannel,
+                                arguments.actionLogChannel,
+                                deleteDuration,
+                                arguments.customDm
+                            )
 
                             footer {
                                 text = Translations.Config.Embed.setBy.translate(user.asUser().username)
@@ -93,7 +108,15 @@ class Config : Extension() {
 
                     respond {
                         embed {
-                            embed(arguments.detectionChannel, arguments.actionLogChannel)
+                            title = Translations.Config.Embed.setTitle.translate()
+                            color = DISCORD_GREEN
+                            timestamp = Clock.System.now()
+                            embed(
+                                arguments.detectionChannel,
+                                arguments.actionLogChannel,
+                                deleteDuration,
+                                arguments.customDm
+                            )
                         }
                     }
                 }
@@ -137,18 +160,7 @@ class Config : Extension() {
                             title = Translations.Config.Embed.viewTitle.translate()
                             color = DISCORD_WHITE
 
-                            field {
-                                name = Translations.Config.Embed.detectionChannelName.translate()
-                                value = detectionChannel.mention
-                            }
-                            field {
-                                name = Translations.Config.Embed.actionLogName.translate()
-                                value = actionLogChannel.mention
-                            }
-                            field {
-                                name = Translations.Config.Embed.deleteName.translate()
-                                value = deleteDuration.toString().lowercase().replace("pt", "").replace("p", "")
-                            }
+                            embed(detectionChannel, actionLogChannel, deleteDuration, config.customDm)
                         }
                     }
                 }
@@ -226,6 +238,11 @@ class Config : Extension() {
                 DeleteDuration.Last7Days.readableName to DeleteDuration.Last7Days
             )
         }
+
+        val customDm by optionalString {
+            name = Translations.Config.CustDm.name
+            description = Translations.Config.CustDm.desc
+        }
     }
 
     suspend fun EphemeralSlashCommandContext<*, *>.getConfig(): Config? {
@@ -234,11 +251,9 @@ class Config : Extension() {
         return ConfigCollection().get(guild!!.id)
     }
 
-    fun EmbedBuilder.embed(detectionChannel: Channel, actionLogChannel: Channel) {
-        title = Translations.Config.Embed.setTitle.translate()
-        color = DISCORD_GREEN
-        timestamp = Clock.System.now()
-
+    fun EmbedBuilder.embed(
+        detectionChannel: Channel, actionLogChannel: Channel, deleteDuration: Duration, customDm: String?
+    ) {
         field {
             name = Translations.Config.Embed.detectionChannelName.translate()
             value = detectionChannel.mention
@@ -246,6 +261,16 @@ class Config : Extension() {
         field {
             name = Translations.Config.Embed.actionLogName.translate()
             value = actionLogChannel.mention
+        }
+        field {
+            name = Translations.Config.Embed.deleteName.translate()
+            value = deleteDuration.toString().lowercase().replace("pt", "").replace("p", "")
+        }
+        if (customDm != null) {
+            field {
+                name = Translations.Config.Embed.custDmName.translate()
+                value = customDm.trimmedContents()
+            }
         }
     }
 }

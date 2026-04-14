@@ -39,27 +39,26 @@ class ConfigCollection : KordExKoinComponent {
      * @param id The ID of the guild to update the config for
      * @param detectionChannelId The new ID for the detection channel
      * @param actionLogId The new ID for the action log.
+     * @param deleteDuration The new duration to delete messages with
+     * @param customDm The new Direct Message to send to the banned user
      */
     suspend fun update(
         id: Snowflake,
         detectionChannelId: Snowflake? = null,
         actionLogId: Snowflake? = null,
-        deleteDuration: Long? = null
+        deleteDuration: Long? = null,
+        customDm: String? = null,
     ) {
         // If options are null, no changes are required
-        if (detectionChannelId == null && actionLogId == null && deleteDuration == null) return
+        if (detectionChannelId == null && actionLogId == null && deleteDuration == null && customDm == null) return
 
-        if (detectionChannelId != null) {
-            collection.findOneAndUpdate(Config::_id eq id, set(Config::detectionChannelId, detectionChannelId))
-        }
+        detectionChannelId?.let { collection.findOneAndUpdate(Config::_id eq id, set(Config::detectionChannelId, it)) }
 
-        if (actionLogId != null) {
-            collection.findOneAndUpdate(Config::_id eq id, set(Config::actionLogId, actionLogId))
-        }
+        actionLogId?.let { collection.findOneAndUpdate(Config::_id eq id, set(Config::actionLogId, it)) }
 
-        if (deleteDuration != null) {
-            collection.findOneAndUpdate(Config::_id eq id, set(Config::deleteDuration, deleteDuration))
-        }
+        deleteDuration?.let { collection.findOneAndUpdate(Config::_id eq id, set(Config::deleteDuration, it)) }
+
+        customDm?.let { collection.findOneAndUpdate(Config::_id eq id, set(Config::customDm, it)) }
     }
 
     /**
