@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "org.hyacinthbots.susdetector"
-version = "1.1.1"
+version = "1.2.0"
 
 val className = "org.hyacinthbots.susdetector.SusDetectorKt"
 val javaVersion = "21"

@@ -32,8 +32,6 @@ import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 class Config : Extension() {
     override val name: String
@@ -252,7 +250,10 @@ class Config : Extension() {
     }
 
     fun EmbedBuilder.embed(
-        detectionChannel: Channel, actionLogChannel: Channel, deleteDuration: Duration, customDm: String?
+        detectionChannel: Channel,
+        actionLogChannel: Channel,
+        deleteDuration: Duration,
+        customDm: String?
     ) {
         field {
             name = Translations.Config.Embed.detectionChannelName.translate()
