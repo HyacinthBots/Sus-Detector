@@ -240,6 +240,12 @@ class Config : Extension() {
         val customDm by optionalString {
             name = Translations.Config.CustDm.name
             description = Translations.Config.CustDm.desc
+
+            mutate {
+                it?.replace("\\n", "\n")
+                    ?.replace("\n ", "\n")
+                    ?.replace("\n", "\n")
+            }
         }
     }
 
