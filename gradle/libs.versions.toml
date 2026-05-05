@@ -9,7 +9,7 @@ grgit = "5.3.3"
 kord-extensions = "2.4.1-20251224.130127-1"
 kordex-plugin = "1.9.0"
 kordex-i18n = "1.1.1"
-logging = "8.0.01"
+logging = "8.0.02"
 logback = "1.5.32"
 mongodb = "5.6.5"
 
